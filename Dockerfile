@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libpq-dev \
+    netcat-openbsd \
     && docker-php-ext-install \
     pdo \
     pdo_mysql \
@@ -47,12 +48,24 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 storage bootstrap/cache \
     && chmod -R 777 bootstrap/cache
 
-# Set Apache document root to Laravel public folder
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
-    && echo '<Directory "/var/www/html/public"> \
-        AllowOverride All \
-        Require all granted \
-    </Directory>' >> /etc/apache2/sites-available/000-default.conf
+# Laravel Apache config
+RUN cat > /etc/apache2/sites-available/000-default.conf << 'EOF'
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html/public
+
+    <Directory /var/www/html/public>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+RUN a2ensite 000-default
+RUN a2dissite 000-default-le-ssl || true
 
 # Expose port
 EXPOSE 80
@@ -60,5 +73,5 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/ || exit 1
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start via entrypoint
+CMD ["/entrypoint.sh"]

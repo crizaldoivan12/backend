@@ -2,10 +2,13 @@
 set -e
 
 # Wait for DB if needed (simple check)
-if [ "$DB_CONNECTION" = "pgsql" ] || [ "$DB_CONNECTION" = "mysql" ]; then
+if [ "$DB_CONNECTION" = "pgsql" ] || [ "$DB_CONNECTION" = "mysql" ] && [ "$DB_HOST" ]; then
   echo "Waiting for database..."
-  until php artisan migrate:status > /dev/null 2>&1; do
-    echo "DB not ready, waiting..."
+  for i in {1..30}; do
+    if nc -z "$DB_HOST" "$DB_PORT" 2>/dev/null; then
+      break
+    fi
+    echo "DB not ready, waiting ($i/30)..."
     sleep 2
   done
 fi
