@@ -2,7 +2,15 @@
 node_modules
 vendor
 .env
+.env.*
 storage/logs
 storage/framework/cache
 storage/framework/sessions
 storage/framework/views
+frontend/
+tests/
+.nyc_output
+coverage/
+*.log
+.DS_Store
+Thumbs.db
