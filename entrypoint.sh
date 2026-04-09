@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Ensure Laravel writable directories exist before any Artisan cache commands run.
+mkdir -p storage/framework/views storage/framework/cache storage/framework/sessions bootstrap/cache
+chown -R www-data:www-data /var/www/html
+chmod -R 777 storage bootstrap/cache
+
 # Wait for DB if needed (simple check)
 if [ "$DB_CONNECTION" = "pgsql" ] || [ "$DB_CONNECTION" = "mysql" ] && [ "$DB_HOST" ]; then
   echo "Waiting for database..."

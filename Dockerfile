@@ -44,7 +44,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
-RUN mkdir -p storage/framework/{views,cache,sessions} \
+RUN mkdir -p storage/framework/views storage/framework/cache storage/framework/sessions bootstrap/cache \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 777 storage bootstrap/cache
 
