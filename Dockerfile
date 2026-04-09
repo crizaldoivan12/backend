@@ -44,9 +44,9 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 777 storage bootstrap/cache \
-    && chmod -R 777 bootstrap/cache
+RUN mkdir -p storage/framework/{views,cache,sessions} \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 777 storage bootstrap/cache
 
 # Laravel Apache config
 RUN cat > /etc/apache2/sites-available/000-default.conf << 'EOF'

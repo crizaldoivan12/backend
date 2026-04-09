@@ -1,0 +1,5 @@
+services:
+  - type: web
+    env: docker
+    dockerfilePath: ./Dockerfile
+    autoDeploy: false

@@ -26,6 +26,11 @@ php artisan migrate --force --no-interaction --quiet
 # Create storage link if missing
 php artisan storage:link || true
 
+# Clear caches first to avoid empty cache clear errors on Render
+php artisan config:clear --quiet || true
+php artisan route:clear --quiet || true
+php artisan view:clear --quiet || true
+
 # Cache configs (use env)
 php artisan config:cache --quiet
 php artisan route:cache --quiet
